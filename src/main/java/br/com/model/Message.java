@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Entity
 @AllArgsConstructor
@@ -16,9 +14,9 @@ public class Message {
     @GeneratedValue
     private Long id;
     @OneToOne
-    private User sender;
-    @OneToMany
-    private List<User> receiver;
+    private Users sender;
+    @OneToOne
+    private Users receiver;
     private String content;
     private CryptoType cryptoType;
 
