@@ -1,23 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html style="overflow: hidden">
 <head>
-    <meta charset="UTF-8">
-    <title>Loginaaaaaaa</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home - hideChat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
-<body>
-<h1>Login</h1>
-<form action="#" th:action="@{/login}" method="post">
-    <div>
-        <label for="login">Login:</label>
-        <input type="text" id="login" name="login" required>
+<body style="background-color: #d3d3d3; min-height: 100vh">
+<div th:insert="~{fragments/navbar.html :: navbar}"></div>
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-two-thirds">
+                <div class="box">
+                    <div style="height: calc(100vh - 360px)">
+                            <div class="column" th:insert="~{fragments/message.html :: recivedMessage}"></div>
+                            <div class="column" th:insert="~{fragments/message.html :: recivedMessage}"></div>
+                    </div>
+                    <div class="columns">
+                        <div class="column" th:insert="~{fragments/message.html :: writeMessage}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="senha">Senha:</label>
-        <input type="password" id="senha" name="senha" required>
-    </div>
-    <div>
-        <button type="submit">Entrar</button>
-    </div>
-</form>
+</section>
 </body>
 </html>
