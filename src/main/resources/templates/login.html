@@ -3,23 +3,26 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - hideChat</title>
+    <title>Message Encryptor</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
-<body style="background-color: #d3d3d3; min-height: 100vh">
-<div th:insert="fragments/navbar.html :: navbar"></div>
+<body>
 <section class="section">
     <div class="container">
         <div class="columns is-centered">
             <div class="column is-one-third">
-                <form class="box">
+                <form class="box" method="post" th:action="@{/}">
                     <h1 class="title">
-                        hideChat
+                        Message Encryptor
                     </h1>
+                    <div class="notification is-danger" th:if="${mensagem != null}">
+                        <button class="delete"></button>
+                        <span th:text="${mensagem}"></span>
+                    </div>
                     <div class="field">
                         <label class="label">Username</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="username">
+                            <input name="username" class="input" type="text" placeholder="username">
                             <span class="icon is-small is-left">
                           <i class="fas fa-user"></i>
                         </span>
@@ -28,19 +31,32 @@
                     <div class="field">
                         <label class="label">Password</label>
                         <div class="control">
-                            <input class="input" type="password" placeholder="password">
+                            <input name="password" class="input" type="password" placeholder="password">
                             <span class="icon is-small is-left">
                           <i class="fas fa-lock"></i>
                         </span>
                         </div>
                     </div>
                     <div class="control">
-                        <button class="button is-primary">Entrar</button>
+                        <button type="submit" class="button is-primary">Login</button>
+                        <a class="button is-light" href="/register">Register</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+            const $notification = $delete.parentNode;
+
+            $delete.addEventListener('click', () => {
+                $notification.parentNode.removeChild($notification);
+            });
+        });
+    });
+</script>
 </body>
 </html>
+

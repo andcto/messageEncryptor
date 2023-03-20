@@ -2,7 +2,9 @@ package br.com.service;
 
 class CifraVigenereService {
 
-    public static String encode(String key, String plaintext){
+    private static String key = "andreyjunior";
+
+    public static String encode(String plaintext){
 
         String ciphertext = "";
         int keyIndex = 0;
@@ -27,7 +29,7 @@ class CifraVigenereService {
         return ciphertext;
     }
 
-    public static String decode(String key, String ciphertext){
+    public static String decode(String ciphertext){
 
         String plaintext = "";
         int keyIndex = 0;

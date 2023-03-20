@@ -28,25 +28,48 @@
     <div class="media-content">
         <div class="field">
             <p class="control">
-                <textarea class="textarea" placeholder="Add a comment..." style="resize: none"></textarea>
+                <textarea id="messageContent" class="textarea" placeholder="Add a comment..." style="resize: none"></textarea>
             </p>
         </div>
         <nav class="level">
             <div class="level-left">
                 <div class="level-item">
-                    <a class="button is-info">Enviar</a>
+                    <button onclick="sendMessage()" class="button is-info">Enviar</button>
+                </div>
+                <div class="level-item">
+                    <select id="sendUsers" >
+                        <option value="0" th:text="Todos"></option>
+                        <th:block th:each="u:${listUsers}">
+                            <option th:attr="value=${u.id}" th:text="${u.name}"></option>
+                        </th:block>
+                    </select>
                 </div>
             </div>
             <div class="level-right">
                 <div class="level-item">
                     <div class="select is-link">
-                        <select>
-                            <option>Aes</option>
-                            <option>Virgenere</option>
+                        <select id="cryptoType" >
+                            <th:block th:each="cryptoType:${T(br.com.model.CryptoType).values()}">
+                                <option th:attr="value=${cryptoType.ordinal()}" th:text="${cryptoType.name()}"></option>
+                            </th:block>
                         </select>
                     </div>
                 </div>
             </div>
         </nav>
     </div>
+
+<script>
+    function sendMessage(){
+        var messageContent = document.getElementById("messageContent");
+        var cryptoType = document.getElementById("cryptoType");
+        var sendUsers = document.getElementById("sendUsers");
+
+        fetch("message/create", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:'{"content":"'+messageContent.value+'","cryptoType":'+cryptoType.value+',"receiver.id":'+sendUsers.value+'}'
+        });
+    }
+</script>
 </article>
