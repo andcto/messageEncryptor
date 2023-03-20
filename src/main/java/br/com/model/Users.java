@@ -8,7 +8,6 @@ import lombok.*;
 
 @Data
 @Entity
-@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Users {

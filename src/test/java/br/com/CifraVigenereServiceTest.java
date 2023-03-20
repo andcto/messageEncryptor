@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CifraVigenereServiceTest {
-
-    private String  CHAVE = "POIS";
     @Test
     public void test(){
 
@@ -15,8 +13,8 @@ public class CifraVigenereServiceTest {
 
         CryptographyService cryptographyService = new CryptographyService();
 
-        String textoCifrado = cryptographyService.cifraVigenereEncode(CHAVE, texto);
-        String textoClaro = cryptographyService.cifraVigenereDecode(CHAVE, textoCifrado);
+        String textoCifrado = cryptographyService.cifraVigenereEncode(texto);
+        String textoClaro = cryptographyService.cifraVigenereDecode(textoCifrado);
 
         System.out.println(textoCifrado);
         System.out.println(textoClaro);
