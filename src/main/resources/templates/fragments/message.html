@@ -1,4 +1,42 @@
-<article class="media" th:fragment="recivedMessage">
+<th:block th:fragment="emptyMessages">
+    <div class="columns is-centered is-vcentered" style="min-height: 100%">
+        <div class="column is-half has-text-centered">
+        <span class="icon is-large">
+          <i class="fa-regular fa-comments fa-2xl"></i>
+        </span>
+            <br>
+            <small>Nada por aqui! Parece que a mensagem foi escondida em um local secreto que ainda não encontramos...</small>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="loading">
+    <style>
+        .rotate {
+            animation: rotation 2s infinite linear;
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <div id="loading" class="columns is-centered is-vcentered" style="min-height: 100%">
+        <div class="column is-half has-text-centered">
+            <span class="icon is-large">
+                <i class="fa-solid fa-spinner fa-2xl rotate"></i>
+            </span>
+            <br>
+            <small>Desenrolando o pergaminho cifrado...</small>
+        </div>
+    </div>
+</th:block>
+
+<article class="media pt-2" th:fragment="recivedMessage">
     <div class="media-left">
         <figure class="image is-64x64">
             <img class="is-rounded" src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
@@ -6,20 +44,24 @@
     </div>
     <div class="media-content">
         <div class="content">
-            <p>
-                <strong>John Smith</strong> <small>@johnsmith</small> <small>31m</small>
+            <p class="mb-1">
+                <strong th:text="${message.sender.name}">John Smith</strong> <small th:text="${'@' + message.sender.username}">@johnsmith</small> <small th:text="${' - ' + message.sentDate}">31m</small>
                 <br>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-                <br>
-                <small style="overflow-wrap: anywhere">
-                    TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gQWVuZWFuIGVmZmljaXR1ciBzaXQgYW1ldCBtYXNzYSBmcmluZ2lsbGEgZWdlc3Rhcy4gTnVsbGFtIGNvbmRpbWVudHVtIGx1Y3R1cyB0dXJwaXMu
-                </small>
+                <span style="overflow-wrap: anywhere" th:text="${message.content}"></span>
             </p>
+            <div class="tags has-addons" style="cursor: pointer">
+                <span class="tag mb-0">
+                    <i class="fa-solid fa-lock-open"></i>
+                </span>
+                <span th:if="${message.cryptoType.name() == 'VIGENERE'}" class="tag is-info mb-0" th:text="${message.cryptoType}"></span>
+                <span th:if="${message.cryptoType.name() == 'VERNAN'}" class="tag is-link mb-0" th:text="${message.cryptoType}"></span>
+                <span th:if="${message.cryptoType.name() == 'AES256'}" class="tag is-primary mb-0" th:text="${message.cryptoType}"></span>
+            </div>
         </div>
     </div>
 </article>
 
-<article class="media" th:fragment="writeMessage">
+<article class="media mt-2" th:fragment="writeMessage">
     <figure class="media-left">
         <p class="image is-64x64">
             <img src="https://bulma.io/images/placeholders/128x128.png">
@@ -28,21 +70,25 @@
     <div class="media-content">
         <div class="field">
             <p class="control">
-                <textarea id="messageContent" class="textarea" placeholder="Add a comment..." style="resize: none"></textarea>
+                <input type="hidden" id="sender" name="sender" th:attr="value=${user.id}">
+                <p style="padding-bottom: 10px"><strong th:text="${user.name}">John Smith</strong> <small th:text="${'@' + user.username}"></small></p>
+                <textarea id="messageContent" class="textarea" placeholder="Escreva sua mensagem..." style="resize: none; min-height: 5em;"></textarea>
             </p>
         </div>
         <nav class="level">
             <div class="level-left">
                 <div class="level-item">
-                    <button onclick="sendMessage()" class="button is-info">Enviar</button>
+                    <button onclick="encryptMessage()" class="button is-info">Enviar</button>
                 </div>
                 <div class="level-item">
-                    <select id="sendUsers" >
-                        <option value="0" th:text="Todos"></option>
-                        <th:block th:each="u:${listUsers}">
-                            <option th:attr="value=${u.id}" th:text="${u.name}"></option>
-                        </th:block>
-                    </select>
+                    <div class="select is-link">
+                        <select id="sendUsers" >
+                            <option value="0" th:text="Todos"></option>
+                            <th:block th:each="u:${listUsers}">
+                                <option th:attr="value=${u.id}" th:text="${u.name}"></option>
+                            </th:block>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="level-right">
@@ -60,15 +106,84 @@
     </div>
 
 <script>
+
+    String.prototype.replaceAt = function(index, replacement) {
+        return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+    }
+
+    var messageContent = document.getElementById("messageContent");
+    var cryptoType = document.getElementById("cryptoType");
+    var receiver = document.getElementById("sendUsers");
+    var sender = document.getElementById("sender");
+
+    function fomatDate(date){
+        const dateOptions = {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        };
+        const timeOptions = {
+            hour: '2-digit',
+            minute: '2-digit',
+        };
+        var stringDate = date.toLocaleDateString('pt-BR', dateOptions);
+        var stringTime = date.toLocaleTimeString('pt-BR', timeOptions);
+        return `${stringDate} ${stringTime}`;
+    }
+
+    function encryptMessage(){
+
+        var encrypt = {
+            message: messageContent.value,
+            cryptoType: cryptoType.value
+        }
+
+        fetch("message/encrypt", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(encrypt)
+        }).then(function (response) {
+            if(response.ok) {
+                return response.text();
+            }
+        }).then(function (body){
+            changeValue(body);
+        });
+
+    }
+
+    async function changeValue(newValue) {
+        for (i = 0; i < newValue.length; i++) {
+            await setTimeout(await animateChange(newValue, i), 1000)
+        }
+        sendMessage();
+    }
+
+    function animateChange(newValue, index){
+        var oldValue = messageContent.value;
+        var auxValue = oldValue.replaceAt(index, newValue.charAt(index));
+        messageContent.value = auxValue;
+    }
     function sendMessage(){
-        var messageContent = document.getElementById("messageContent");
-        var cryptoType = document.getElementById("cryptoType");
-        var sendUsers = document.getElementById("sendUsers");
+
+        var message = {
+            content: messageContent.value,
+            cryptoType: cryptoType.value,
+            receiver: {
+                id : receiver.value,
+            },
+            sender: {
+                id: sender.value,
+            },
+            sentDate: fomatDate(new Date()),
+        }
 
         fetch("message/create", {
             method:"POST",
             headers:{"Content-Type":"application/json"},
-            body:'{"content":"'+messageContent.value+'","cryptoType":'+cryptoType.value+',"receiver.id":'+sendUsers.value+'}'
+            body: JSON.stringify(message)
+        }).then(result => {
+            messageContent.value = "";
         });
     }
 </script>

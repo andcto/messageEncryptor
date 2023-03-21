@@ -18,10 +18,14 @@ public class UserController {
     public ModelAndView save(Users users){
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("home");
-        modelAndView.addObject("user", users);
+        modelAndView.setViewName("redirect:/");
 
-        userRepository.save(users);
+        try {
+            userRepository.save(users);
+        } catch (Exception e){
+            modelAndView.addObject("message", "usuário já cadastrado");
+            modelAndView.setViewName("redirect:/");
+        }
 
         return modelAndView;
     }

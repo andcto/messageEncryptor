@@ -18,10 +18,10 @@ public class MessageService {
 //    }
 
     public void save(Message message) {
-        if(message.getCryptoType()== CryptoType.VIGENERE){
-            message.setContent(cryptographyService.cifraVigenereEncode(message.getContent()));
 
-            messageRepository.save(message);
+        if (message.getReceiver().getId() == 0){
+            message.setReceiver(null);
         }
+        messageRepository.save(message);
     }
 }

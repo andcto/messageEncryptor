@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home - hideChat</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body style="background-color: #d3d3d3; min-height: 100vh">
 <div th:insert="~{fragments/navbar.html :: navbar}"></div>
@@ -13,9 +14,8 @@
         <div class="columns is-centered">
             <div class="column is-two-thirds">
                 <div class="box">
-                    <div style="height: calc(100vh - 360px)">
-                            <div class="column" th:insert="~{fragments/message.html :: recivedMessage}"></div>
-                            <div class="column" th:insert="~{fragments/message.html :: recivedMessage}"></div>
+                    <div style="height: calc(100vh - 360px); overflow-y: auto; overflow-x: hidden" id="messages" >
+                        <div class="columns is-centered is-vcentered" style="min-height: 100%" th:replace="~{fragments/message.html :: loading}"></div>
                     </div>
                     <div class="columns">
                         <div class="column" th:insert="~{fragments/message.html :: writeMessage}"></div>
@@ -25,5 +25,42 @@
         </div>
     </div>
 </section>
+<script>
+
+    var messagesBox = document.getElementById("messages");
+    var loading = true;
+
+    loadMessages();
+    function load(url, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(xhr.responseText);
+            }
+        };
+        xhr.open("GET", url, true);
+        xhr.send();
+    }
+
+    function loadMessages(){
+        load("/message/allid?userId=153", insertMessages)
+    }
+
+    function insertMessages(messages){
+        messages = JSON.parse(messages);
+        for(var i = 0; i < messages.length; i++){
+            load("/message/" + messages[i], insertMessageHtml);
+        }
+    }
+
+    function insertMessageHtml(message){
+        if(loading){
+            messagesBox.innerHTML = "";
+            loading = false;
+        }
+        messagesBox.insertAdjacentHTML("afterbegin", message);
+    }
+
+</script>
 </body>
 </html>

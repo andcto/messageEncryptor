@@ -1,5 +1,6 @@
 package br.com.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,9 +22,8 @@ public class Message {
     @OneToOne
     private Users receiver;
     private String content;
-    @Enumerated(EnumType.STRING)
     private CryptoType cryptoType;
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime sentDate;
 
 }
