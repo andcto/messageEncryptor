@@ -47,11 +47,11 @@
             <p class="mb-1">
                 <strong th:text="${message.sender.name}">John Smith</strong> <small th:text="${'@' + message.sender.username}">@johnsmith</small> <small th:text="${' - ' + message.sentDate}">31m</small>
                 <br>
-                <span style="overflow-wrap: anywhere" th:text="${message.content}"></span>
+                <span style="overflow-wrap: anywhere" th:id="'message' + ${message.id}" th:text="${message.content}"></span>
             </p>
-            <div class="tags has-addons" style="cursor: pointer">
+            <div class="tags has-addons" style="cursor: pointer" th:attr="data-cryptoType=${message.cryptoType.ordinal()},data-encrypted=${'true'}" th:onclick="'crypt(this, '+ ${message.id} +')'">
                 <span class="tag mb-0">
-                    <i class="fa-solid fa-lock-open"></i>
+                    <i th:id="'lock' + ${message.id}" class="fa-solid fa-lock"></i>
                 </span>
                 <span th:if="${message.cryptoType.name() == 'VIGENERE'}" class="tag is-info mb-0" th:text="${message.cryptoType}"></span>
                 <span th:if="${message.cryptoType.name() == 'VERNAN'}" class="tag is-link mb-0" th:text="${message.cryptoType}"></span>

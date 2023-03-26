@@ -61,6 +61,55 @@
         messagesBox.insertAdjacentHTML("afterbegin", message);
     }
 
+    function crypt(element, messageId){
+        var messageElement = document.getElementById('message'+ messageId);
+        var encrrypted = element.dataset.encrypted;
+        var cryptoType = element.dataset.cryptotype;
+        var lock = document.getElementById('lock' + messageId);
+
+        if(encrrypted == 'true'){
+
+            var message = {
+                message: messageElement.textContent,
+                cryptoType: cryptoType
+            }
+
+            fetch("/message/decrypt", {
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify(message)
+            }).then(result => {
+                return result.text();
+            }).then(body => {
+                messageElement.innerText = body;
+                element.dataset.encrypted = 'false';
+                lock.classList.remove("fa-lock")
+                lock.classList.add("fa-lock-open")
+            });
+
+        } else {
+            var message = {
+                message: messageElement.textContent,
+                cryptoType: cryptoType
+            }
+
+            fetch("/message/encrypt", {
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify(message)
+            }).then(result => {
+                return result.text();
+            }).then(body => {
+                messageElement.innerText = body;
+                element.dataset.encrypted = 'true';
+                lock.classList.remove("fa-lock-open")
+                lock.classList.add("fa-lock")
+            });
+        }
+
+        console.log(element, messageElement, messageId, encrrypted, cryptoType);
+    }
+
 </script>
 </body>
 </html>
