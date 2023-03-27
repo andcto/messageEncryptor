@@ -12,7 +12,78 @@
     <div class="columns is-centered">
       <div class="column is-one-third">
         <form class="box" th:action="@{/register}" method="post">
-          <div >
+          <label class="label" for="name">Avatar</label>
+          <div class="columns">
+            <div class="column is-one-third">
+              <figure class="image is-48x48">
+                <img src="/images/profile/01.png">
+              </figure>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="avatar" value="01" checked>
+                  01
+                </label>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <figure class="image is-48x48">
+                <img src="/images/profile/02.png">
+              </figure>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="avatar" value="02">
+                  02
+                </label>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <figure class="image is-48x48">
+                <img src="/images/profile/03.png">
+              </figure>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="avatar" value="03">
+                  03
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column is-one-third">
+              <figure class="image is-48x48">
+                <img src="/images/profile/04.png">
+              </figure>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="avatar" value="04">
+                  04
+                </label>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <figure class="image is-48x48">
+                <img src="/images/profile/05.png">
+              </figure>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="avatar" value="05">
+                  05
+                </label>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <figure class="image is-48x48">
+                <img src="/images/profile/06.png">
+              </figure>
+              <div class="control">
+                <label class="radio">
+                  <input type="radio" name="avatar" value="06">
+                  06
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="field">
             <label class="label" for="name">Name:</label>
             <input class="input" type="text" id="name" name="name" required />
           </div>

@@ -10,9 +10,9 @@ public class CryptographyService {
         if(cryptoType.equals(CryptoType.VIGENERE)){
             return CifraVigenereService.encode(mensagem);
         } else if (cryptoType.equals(CryptoType.VERNAN)) {
-            return mensagem;
+            return CifraVernamService.encode(mensagem);
         } else if (cryptoType.equals(CryptoType.AES256)) {
-            return mensagem;
+            return AesService.encode(mensagem);
         } else {
             return null;
         }
@@ -30,9 +30,9 @@ public class CryptographyService {
         if(cryptoType.equals(CryptoType.VIGENERE)){
             return CifraVigenereService.decode(mensagem);
         } else if (cryptoType.equals(CryptoType.VERNAN)) {
-            return mensagem;
+            return CifraVernamService.decode(mensagem);
         } else if (cryptoType.equals(CryptoType.AES256)) {
-            return mensagem;
+            return AesService.decode(mensagem);
         } else {
             return null;
         }

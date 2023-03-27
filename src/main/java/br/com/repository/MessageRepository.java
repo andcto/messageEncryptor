@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message,Long> {
-    @Query("SELECT m.id FROM Message m WHERE m.sender = :sender OR m.receiver IS NULL AND m.sentDate > :sentDate")
-    public List<Long> findMessagesIdBySenderAndReceiverIsNullAndSentDateAfter(Users sender, LocalDateTime sentDate);
+    @Query("SELECT m.id FROM Message m WHERE m.sender = :sender OR (m.receiver IS NULL OR m.receiver = :sender)")
+    public List<Long> findMessagesIdByUser(Users sender);
 
     public List<Message> findMessagesBySenderOrReceiverIsNull(Users users);
 

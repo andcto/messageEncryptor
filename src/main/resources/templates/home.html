@@ -14,7 +14,7 @@
         <div class="columns is-centered">
             <div class="column is-two-thirds">
                 <div class="box">
-                    <div style="height: calc(100vh - 360px); overflow-y: auto; overflow-x: hidden" id="messages" >
+                    <div style="height: calc(100vh - 360px); overflow-y: auto; overflow-x: hidden; padding-bottom: 20px" id="messages" >
                         <div class="columns is-centered is-vcentered" style="min-height: 100%" th:replace="~{fragments/message.html :: loading}"></div>
                     </div>
                     <div class="columns">
@@ -26,9 +26,17 @@
     </div>
 </section>
 <script>
+    /*<![CDATA[*/
+    var userId = [[${user.id}]];
+    /*]]>*/
+</script>
+<script>
+
+    var messagesId = [];
 
     var messagesBox = document.getElementById("messages");
     var loading = true;
+    var empty = false;
 
     loadMessages();
     function load(url, callback) {
@@ -42,23 +50,71 @@
         xhr.send();
     }
 
-    function loadMessages(){
-        load("/message/allid?userId=153", insertMessages)
+    async function loadMessages() {
+        await load("/message/allid?userId=" + userId, insertMessages);
+        await poolMessages();
+    }
+
+    async function poolMessages(){
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        load("/message/allid?userId=" + userId, insertMessages);
+        poolMessages();
+    }
+
+    async function emptyMessages() {
+        empty = true;
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        load("/message/empty", insertEmpty);
+    }
+
+    function insertEmpty(fragment){
+
+        messagesBox.innerHTML = "";
+        loading = false;
+
+        messagesBox.insertAdjacentHTML("afterbegin", fragment);
+
     }
 
     function insertMessages(messages){
         messages = JSON.parse(messages);
-        for(var i = 0; i < messages.length; i++){
-            load("/message/" + messages[i], insertMessageHtml);
+
+        if(messages.length == 0){
+
+            if(loading) {
+                emptyMessages();
+            }
+
+        } else {
+
+            var newMessages = diffArrays(messages, messagesId);
+            messagesId.push(...newMessages);
+
+            for (var i = 0; i < newMessages.length; i++) {
+                load("/message/" + newMessages[i], insertMessageHtml);
+            }
+
         }
     }
+
+    function diffArrays(arr1, arr2) {
+        const diff = [];
+        for (let i = 0; i < arr1.length; i++) {
+            if (!arr2.includes(arr1[i])) {
+                diff.push(arr1[i]);
+            }
+        }
+        return diff;
+    }
+
 
     function insertMessageHtml(message){
         if(loading){
             messagesBox.innerHTML = "";
             loading = false;
         }
-        messagesBox.insertAdjacentHTML("afterbegin", message);
+        messagesBox.insertAdjacentHTML("beforeend", message);
+        messagesBox.scrollTo(0, messagesBox.scrollHeight);
     }
 
     function crypt(element, messageId){
@@ -107,7 +163,6 @@
             });
         }
 
-        console.log(element, messageElement, messageId, encrrypted, cryptoType);
     }
 
 </script>

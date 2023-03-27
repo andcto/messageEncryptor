@@ -51,7 +51,7 @@ public class MessageController {
     public List<Long> listAllId(Long userId){
 
         Users user = userRepository.findById(userId).get();
-        List<Long> messagesIds = messageRepository.findMessagesIdBySenderAndReceiverIsNullAndSentDateAfter(user, LocalDateTime.now());
+        List<Long> messagesIds = messageRepository.findMessagesIdByUser(user);
 
         return messagesIds;
 
@@ -66,6 +66,15 @@ public class MessageController {
         modelAndView.addObject("message", message);
         modelAndView.setViewName("fragments/message :: recivedMessage");
         return modelAndView;
+    }
+
+    @GetMapping("/message/empty")
+    public ModelAndView getMessageFragmentEmpty(){
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("fragments/message :: emptyMessages");
+        return modelAndView;
+
     }
 
     @GetMapping("/message/all")
