@@ -18,7 +18,7 @@
 
 ![Home](/readme_images/home.png)
 
-* Cifra de virgenere
+* Cifra de vigenere
 * Cifra de vernam
 * AES256
 
