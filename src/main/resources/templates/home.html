@@ -77,7 +77,9 @@
     }
 
     function insertMessages(messages){
+
         messages = JSON.parse(messages);
+
 
         if(messages.length == 0){
 
@@ -86,6 +88,11 @@
             }
 
         } else {
+
+            if(empty){
+                empty = false;
+                messagesBox.innerHTML = "";
+            }
 
             var newMessages = diffArrays(messages, messagesId);
             messagesId.push(...newMessages);
